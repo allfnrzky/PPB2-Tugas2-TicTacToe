@@ -6,7 +6,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.multiplayertic_tac_toe.databinding.ActivityGameBinding
 
-class GameActivity : AppCompatActivity(),View.OnClickListener {
+class GameActivity : AppCompatActivity(), View.OnClickListener {
 
     lateinit var binding: ActivityGameBinding
     private var gameModel: GameModel? = null
@@ -15,9 +15,14 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
         super.onCreate(savedInstanceState)
         binding = ActivityGameBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = "Game Tic Tac Toe"
+
 
         GameData.fetchGameModel()
 
+        // Tombol game
         binding.btn0.setOnClickListener(this)
         binding.btn1.setOnClickListener(this)
         binding.btn2.setOnClickListener(this)
@@ -28,14 +33,21 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
         binding.btn7.setOnClickListener(this)
         binding.btn8.setOnClickListener(this)
 
+        // Tombol mulai game
         binding.startGameBtn.setOnClickListener {
             startGame()
         }
 
+        // Observe perubahan game dari Firebase
         GameData.gameModel.observe(this) {
             gameModel = it
             setUI()
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressedDispatcher.onBackPressed()
+        return true
     }
 
     fun setUI() {
@@ -50,49 +62,61 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
             binding.btn7.text = filledPos[7]
             binding.btn8.text = filledPos[8]
 
-            binding.startGameBtn.visibility = View.VISIBLE
-
-            binding.gameStatusText.text =
-                when (gameStatus) {
-                    GameStatus.CREATED -> {
-                        binding.startGameBtn.visibility = View.INVISIBLE
-                        "ID Game: $gameId\nMenunggu pemain lain untuk bergabung..."
-                    }
-
-                    GameStatus.JOINED -> {
-                        "Tekan tombol 'Mulai Game' untuk memulai"
-                    }
-
-                    GameStatus.INPROGRESS -> {
-                        binding.startGameBtn.visibility = View.INVISIBLE
-                        when (GameData.myID) {
-                            currentPlayer -> "Giliran kamu!"
-                            else -> "Giliran pemain $currentPlayer"
-                        }
-                    }
-
-                    GameStatus.FINISHED -> {
-                        if (winner.isNotEmpty()) {
-                            when (GameData.myID) {
-                                winner -> "Kamu menang!"
-                                else -> "Pemain $winner menang!"
-                            }
-                        } else {
-                            "Seri!!"
-                        }
-                    }
-
-                    else -> ""
+            when (gameStatus) {
+                GameStatus.CREATED -> {
+                    binding.startGameBtn.visibility = View.INVISIBLE
+                    binding.gameStatusText.text = "ID Game: $gameId\nMenunggu pemain lain untuk bergabung..."
                 }
+
+                GameStatus.JOINED -> {
+                    binding.startGameBtn.visibility = View.VISIBLE
+                    binding.startGameBtn.text = "Mulai Game"
+                    binding.gameStatusText.text = "Tekan tombol 'Mulai Game' untuk memulai"
+                }
+
+                GameStatus.INPROGRESS -> {
+                    binding.startGameBtn.visibility = View.INVISIBLE
+                    binding.gameStatusText.text = if (GameData.myID == currentPlayer)
+                        "Giliran kamu!"
+                    else
+                        "Giliran pemain $currentPlayer"
+                }
+
+                GameStatus.FINISHED -> {
+                    binding.startGameBtn.visibility = View.VISIBLE
+                    binding.startGameBtn.text = "Mulai Ulang!" // 🔁 ubah teks tombol
+
+                    binding.gameStatusText.text = when {
+                        winner.isNotEmpty() -> if (GameData.myID == winner)
+                            "Kamu menang!"
+                        else
+                            "Pemain $winner menang!"
+                        else -> "Seri!!"
+                    }
+                }
+
+                else -> {}
+            }
         }
     }
 
     fun startGame() {
         gameModel?.apply {
+            // Jika game sudah selesai → reset papan
+            if (gameStatus == GameStatus.FINISHED) {
+                filledPos = Array(9) { "" }.toMutableList()
+                currentPlayer = "X"
+                winner = ""
+            }
+
+            // Update status ke INPROGRESS
             updateGameData(
                 GameModel(
                     gameId = gameId,
-                    gameStatus = GameStatus.INPROGRESS
+                    gameStatus = GameStatus.INPROGRESS,
+                    filledPos = filledPos,
+                    currentPlayer = currentPlayer,
+                    winner = winner
                 )
             )
         }
@@ -126,7 +150,7 @@ class GameActivity : AppCompatActivity(),View.OnClickListener {
                 }
             }
 
-            if (filledPos.none { it.isEmpty() }) {
+            if (filledPos.none { it.isEmpty() } && gameStatus != GameStatus.FINISHED) {
                 gameStatus = GameStatus.FINISHED
             }
 

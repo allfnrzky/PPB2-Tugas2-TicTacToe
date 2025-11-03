@@ -7,11 +7,23 @@
     android:layout_height="match_parent"
     tools:context=".GameActivity">
 
+    <!-- Toolbar dengan tombol back -->
+
     <!-- Judul Game -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#009688"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:title="Game"
+        app:titleTextColor="#FFFFFF" />
+
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar"
         android:text="Tic Tac Toe"
         android:textColor="#374151"
         android:textSize="32sp"
@@ -34,7 +46,7 @@
         android:gravity="center"
         android:letterSpacing="0.03" />
 
-    <!-- Area Grid Game -->
+    <!-- Grid Game -->
     <GridLayout
         android:id="@+id/game_grid"
         android:layout_width="wrap_content"
@@ -45,7 +57,6 @@
         android:padding="8dp"
         android:background="@android:color/transparent">
 
-        <!-- Tombol-tombol Game -->
         <Button
             android:id="@+id/btn_0"
             style="@style/GameButton"
@@ -94,7 +105,7 @@
 
     </GridLayout>
 
-    <!-- Tombol Mulai Ulang -->
+    <!-- Tombol Mulai / Mulai Ulang -->
     <Button
         android:id="@+id/start_game_btn"
         android:layout_width="wrap_content"

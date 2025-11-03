@@ -84,7 +84,7 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
 
                 GameStatus.FINISHED -> {
                     binding.startGameBtn.visibility = View.VISIBLE
-                    binding.startGameBtn.text = "Mulai Ulang!" // 🔁 ubah teks tombol
+                    binding.startGameBtn.text = "Mulai Ulang!" //
 
                     binding.gameStatusText.text = when {
                         winner.isNotEmpty() -> if (GameData.myID == winner)

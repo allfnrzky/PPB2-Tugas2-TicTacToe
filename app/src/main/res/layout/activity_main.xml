@@ -13,7 +13,7 @@
         android:id="@+id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/app_name"
+        android:text="Tic Tac Toe Multiplayer"
         android:textSize="34sp"
         android:textStyle="bold"
         android:textColor="#374151"
@@ -21,7 +21,7 @@
         android:layout_marginTop="50dp"
         android:letterSpacing="0.05" />
 
-    <!-- Tombol Play Offline -->
+    <!-- Tombol Main Offline -->
     <Button
         android:id="@+id/play_offline_btn"
         android:layout_width="280dp"
@@ -29,7 +29,7 @@
         android:layout_below="@id/tv_title"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
-        android:text="Play Offline"
+        android:text="Main Offline"
         android:textAllCaps="false"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -46,12 +46,12 @@
         android:layout_below="@id/play_offline_btn"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
-        android:text="Or"
+        android:text="atau"
         android:textColor="#6B7280"
         android:textSize="18sp"
         android:textStyle="bold" />
 
-    <!-- Tombol Create Game Online -->
+    <!-- Tombol Buat Game Online -->
     <Button
         android:id="@+id/create_online_game_btn"
         android:layout_width="280dp"
@@ -59,7 +59,7 @@
         android:layout_below="@id/tv_or1"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
-        android:text="Create Game Online"
+        android:text="Buat Game Online"
         android:textAllCaps="false"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -76,7 +76,7 @@
         android:layout_below="@id/create_online_game_btn"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
-        android:text="Or"
+        android:text="atau"
         android:textColor="#6B7280"
         android:textSize="18sp"
         android:textStyle="bold" />
@@ -89,7 +89,7 @@
         android:layout_below="@id/tv_or2"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
-        android:hint="Enter Game ID"
+        android:hint="Masukkan ID Game"
         android:gravity="center"
         android:textColor="#374151"
         android:textSize="18sp"
@@ -97,7 +97,7 @@
         android:padding="12dp"
         android:background="@drawable/rounded_edittext_bg" />
 
-    <!-- Tombol Join Online Game -->
+    <!-- Tombol Gabung Game Online -->
     <Button
         android:id="@+id/join_online_game_btn"
         android:layout_width="280dp"
@@ -105,7 +105,7 @@
         android:layout_below="@id/game_id_input"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
-        android:text="Join Game Online"
+        android:text="Gabung Game Online"
         android:textAllCaps="false"
         android:textSize="18sp"
         android:textStyle="bold"

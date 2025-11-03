@@ -3,34 +3,21 @@ package com.example.multiplayertic_tac_toe
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.example.multiplayertic_tac_toe.databinding.ActivityGameBinding
 
-class GameActivity : AppCompatActivity(), View.OnClickListener {
+class GameActivity : AppCompatActivity(),View.OnClickListener {
 
-    private lateinit var binding: ActivityGameBinding
-    private var filledPos = Array(9) { "" }
-    private var currentPlayer = "X"
-    private var gameActive = false
+    lateinit var binding: ActivityGameBinding
+    private var gameModel: GameModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-
         binding = ActivityGameBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Edge-to-edge layout
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+        GameData.fetchGameModel()
 
-        // Set listener untuk setiap tombol papan
         binding.btn0.setOnClickListener(this)
         binding.btn1.setOnClickListener(this)
         binding.btn2.setOnClickListener(this)
@@ -41,70 +28,82 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
         binding.btn7.setOnClickListener(this)
         binding.btn8.setOnClickListener(this)
 
-        // Tombol mulai ulang
         binding.startGameBtn.setOnClickListener {
             startGame()
         }
 
-        // Awal game
-        setGameStatus("Klik 'Start Game' untuk memulai")
+        GameData.gameModel.observe(this) {
+            gameModel = it
+            setUI()
+        }
     }
 
-    private fun startGame() {
-        filledPos = Array(9) { "" }
-        currentPlayer = "X"
-        gameActive = true
+    fun setUI() {
+        gameModel?.apply {
+            binding.btn0.text = filledPos[0]
+            binding.btn1.text = filledPos[1]
+            binding.btn2.text = filledPos[2]
+            binding.btn3.text = filledPos[3]
+            binding.btn4.text = filledPos[4]
+            binding.btn5.text = filledPos[5]
+            binding.btn6.text = filledPos[6]
+            binding.btn7.text = filledPos[7]
+            binding.btn8.text = filledPos[8]
 
-        // Kosongkan papan
-        binding.btn0.text = ""
-        binding.btn1.text = ""
-        binding.btn2.text = ""
-        binding.btn3.text = ""
-        binding.btn4.text = ""
-        binding.btn5.text = ""
-        binding.btn6.text = ""
-        binding.btn7.text = ""
-        binding.btn8.text = ""
+            binding.startGameBtn.visibility = View.VISIBLE
 
-        setGameStatus("Giliran $currentPlayer")
+            binding.gameStatusText.text =
+                when (gameStatus) {
+                    GameStatus.CREATED -> {
+                        binding.startGameBtn.visibility = View.INVISIBLE
+                        "ID Game: $gameId\nMenunggu pemain lain untuk bergabung..."
+                    }
+
+                    GameStatus.JOINED -> {
+                        "Tekan tombol 'Mulai Game' untuk memulai"
+                    }
+
+                    GameStatus.INPROGRESS -> {
+                        binding.startGameBtn.visibility = View.INVISIBLE
+                        when (GameData.myID) {
+                            currentPlayer -> "Giliran kamu!"
+                            else -> "Giliran pemain $currentPlayer"
+                        }
+                    }
+
+                    GameStatus.FINISHED -> {
+                        if (winner.isNotEmpty()) {
+                            when (GameData.myID) {
+                                winner -> "Kamu menang!"
+                                else -> "Pemain $winner menang!"
+                            }
+                        } else {
+                            "Seri!!"
+                        }
+                    }
+
+                    else -> ""
+                }
+        }
     }
 
-    override fun onClick(v: View?) {
-        if (!gameActive) {
-            Toast.makeText(this, "Game belum dimulai", Toast.LENGTH_SHORT).show()
-            return
+    fun startGame() {
+        gameModel?.apply {
+            updateGameData(
+                GameModel(
+                    gameId = gameId,
+                    gameStatus = GameStatus.INPROGRESS
+                )
+            )
         }
-
-        val clickedBtn = v as? android.widget.Button ?: return
-        val tag = clickedBtn.tag?.toString()?.toIntOrNull() ?: return
-
-        if (filledPos[tag].isNotEmpty()) {
-            Toast.makeText(this, "Kotak sudah terisi!", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        filledPos[tag] = currentPlayer
-        clickedBtn.text = currentPlayer
-
-        if (checkWinner()) {
-            setGameStatus("Pemain $currentPlayer menang!")
-            gameActive = false
-            return
-        }
-
-        if (filledPos.none { it.isEmpty() }) {
-            setGameStatus("Seri!")
-            gameActive = false
-            return
-        }
-
-        // Ganti pemain
-        currentPlayer = if (currentPlayer == "X") "O" else "X"
-        setGameStatus("Giliran $currentPlayer")
     }
 
-    private fun checkWinner(): Boolean {
-        val winPositions = arrayOf(
+    fun updateGameData(model: GameModel) {
+        GameData.saveGameModel(model)
+    }
+
+    fun checkForWinner() {
+        val winningPos = arrayOf(
             intArrayOf(0, 1, 2),
             intArrayOf(3, 4, 5),
             intArrayOf(6, 7, 8),
@@ -112,25 +111,49 @@ class GameActivity : AppCompatActivity(), View.OnClickListener {
             intArrayOf(1, 4, 7),
             intArrayOf(2, 5, 8),
             intArrayOf(0, 4, 8),
-            intArrayOf(2, 4, 6)
+            intArrayOf(2, 4, 6),
         )
 
-        for (combo in winPositions) {
-            val a = combo[0]
-            val b = combo[1]
-            val c = combo[2]
-
-            if (filledPos[a] == filledPos[b] &&
-                filledPos[b] == filledPos[c] &&
-                filledPos[a].isNotEmpty()
-            ) {
-                return true
+        gameModel?.apply {
+            for (i in winningPos) {
+                if (
+                    filledPos[i[0]] == filledPos[i[1]] &&
+                    filledPos[i[1]] == filledPos[i[2]] &&
+                    filledPos[i[0]].isNotEmpty()
+                ) {
+                    gameStatus = GameStatus.FINISHED
+                    winner = filledPos[i[0]]
+                }
             }
+
+            if (filledPos.none { it.isEmpty() }) {
+                gameStatus = GameStatus.FINISHED
+            }
+
+            updateGameData(this)
         }
-        return false
     }
 
-    private fun setGameStatus(status: String) {
-        binding.gameStatusText.text = status
+    override fun onClick(v: View?) {
+        gameModel?.apply {
+            if (gameStatus != GameStatus.INPROGRESS) {
+                Toast.makeText(applicationContext, "Game belum dimulai!", Toast.LENGTH_SHORT)
+                    .show()
+                return
+            }
+
+            if (gameId != "-1" && currentPlayer != GameData.myID) {
+                Toast.makeText(applicationContext, "Bukan giliran kamu!", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            val clickedPos = (v?.tag as String).toInt()
+            if (filledPos[clickedPos].isEmpty()) {
+                filledPos[clickedPos] = currentPlayer
+                currentPlayer = if (currentPlayer == "X") "O" else "X"
+                checkForWinner()
+                updateGameData(this)
+            }
+        }
     }
 }

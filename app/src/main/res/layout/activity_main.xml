@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F9FAFB"
+    tools:context=".MainActivity">
+
+    <!-- Judul Aplikasi -->
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        android:textColor="#374151"
+        android:gravity="center"
+        android:layout_marginTop="50dp"
+        android:letterSpacing="0.05" />
+
+    <!-- Tombol Play Offline -->
+    <Button
+        android:id="@+id/play_offline_btn"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:text="Play Offline"
+        android:textAllCaps="false"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#009688"
+        android:elevation="4dp"
+        android:paddingVertical="12dp" />
+
+    <!-- Teks pemisah -->
+    <TextView
+        android:id="@+id/tv_or1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/play_offline_btn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Or"
+        android:textColor="#6B7280"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <!-- Tombol Create Game Online -->
+    <Button
+        android:id="@+id/create_online_game_btn"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_or1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Create Game Online"
+        android:textAllCaps="false"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#3B82F6"
+        android:elevation="4dp"
+        android:paddingVertical="12dp" />
+
+    <!-- Teks pemisah kedua -->
+    <TextView
+        android:id="@+id/tv_or2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/create_online_game_btn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Or"
+        android:textColor="#6B7280"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <!-- Input Game ID -->
+    <EditText
+        android:id="@+id/game_id_input"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_or2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:hint="Enter Game ID"
+        android:gravity="center"
+        android:textColor="#374151"
+        android:textSize="18sp"
+        android:inputType="number"
+        android:padding="12dp"
+        android:background="@drawable/rounded_edittext_bg" />
+
+    <!-- Tombol Join Online Game -->
+    <Button
+        android:id="@+id/join_online_game_btn"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/game_id_input"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Join Game Online"
+        android:textAllCaps="false"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#10B981"
+        android:elevation="4dp"
+        android:paddingVertical="12dp" />
+
+</RelativeLayout>
